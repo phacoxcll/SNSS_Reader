@@ -1,8 +1,0 @@
-C:\Users\Alberto\source\repos\SNSS Reader\SNSS Reader\bin\Debug\SNSS Reader.exe
-C:\Users\Alberto\source\repos\SNSS Reader\SNSS Reader\bin\Debug\SNSS Reader.pdb
-C:\Users\Alberto\source\repos\SNSS Reader\SNSS Reader\obj\Debug\SNSS Reader.csprojAssemblyReference.cache
-C:\Users\Alberto\source\repos\SNSS Reader\SNSS Reader\obj\Debug\SNSS_Reader.Properties.Resources.resources
-C:\Users\Alberto\source\repos\SNSS Reader\SNSS Reader\obj\Debug\SNSS Reader.csproj.GenerateResource.cache
-C:\Users\Alberto\source\repos\SNSS Reader\SNSS Reader\obj\Debug\SNSS Reader.exe
-C:\Users\Alberto\source\repos\SNSS Reader\SNSS Reader\obj\Debug\SNSS Reader.pdb
-C:\Users\Alberto\source\repos\SNSS Reader\SNSS Reader\obj\Debug\SNSS_Reader.Form.resources
