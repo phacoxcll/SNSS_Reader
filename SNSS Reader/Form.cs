@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace SNSS_Reader
@@ -12,23 +11,25 @@ namespace SNSS_Reader
         {
             InitializeComponent();
             File = null;
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length == 2)
+                Open(args[1]);
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Simplest reader of SNSS format. Version 19-11-30\n\n" +
+            MessageBox.Show("Simplest reader of SNSS format. Version 21-02-09\n\n" +
                 "By phacox.cll\n\n" +
                 "Based on:\n" +
                 "  https://digitalinvestigation.wordpress.com/2012/09/03/chrome-session-and-tabs-files-and-the-puzzle-of-the-pickle/",
                 "About", MessageBoxButtons.OK, MessageBoxIcon.None);
         }
 
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        private void Open(string path)
         {
-            openFileDialog.FileName = "";
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            try
             {
-                File = new SNSS(openFileDialog.FileName);
+                File = new SNSS(path);
 
                 richTextBox.Clear();
                 treeView.Nodes.Clear();
@@ -43,6 +44,41 @@ namespace SNSS_Reader
                     root.Nodes.Add(node);
                 }
             }
+            catch
+            {
+                richTextBox.AppendText("Could not open file: \"" + path + "\"");
+            }
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openFileDialog.FileName = "";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                Open(openFileDialog.FileName);
+                if (File != null)
+                    ShowURLs();
+            }
+        }
+
+        private void ShowURLs()
+        {
+            richTextBox.Clear();
+            richTextBox.AppendText(File.ToString() + "\n");
+            if (File.Version != 0)
+            {
+                richTextBox.AppendText("URLs:\n");
+                for (int i = 0; i < File.Commands.Count; i++)
+                {
+                    if (File.Commands[i].Content is SNSS.Tab)
+                    {
+                        int t = ((SNSS.Tab)File.Commands[i].Content).Index;
+                        while (t-- > 0)
+                            richTextBox.AppendText("  ");
+                        richTextBox.AppendText(((SNSS.Tab)File.Commands[i].Content).URL + "\n");
+                    }
+                }
+            }
         }
 
         private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
@@ -51,17 +87,7 @@ namespace SNSS_Reader
             {
                 if (treeView.SelectedNode.Name == "SNSS")
                 {
-                    richTextBox.Clear();
-                    richTextBox.AppendText(File.ToString() + "\n");
-                    if (File.Version != 0)
-                    {
-                        richTextBox.AppendText("URLs:\n");
-                        for (int i = 0; i < File.Commands.Count; i++)
-                        {
-                            if (File.Commands[i].Content is SNSS.Tab)
-                                richTextBox.AppendText(((SNSS.Tab)File.Commands[i].Content).URL + "\n");
-                        }
-                    }
+                    ShowURLs();
                 }
                 else
                 {

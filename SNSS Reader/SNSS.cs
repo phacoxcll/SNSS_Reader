@@ -188,123 +188,132 @@ namespace SNSS_Reader
 
             public TabState(byte[] data)
             {
-                Version = BitConverter.ToInt32(data, 4);
-                long m0 = BitConverter.ToInt64(data, 12);
-                long m1 = BitConverter.ToInt64(data, 20);
-                long m2 = BitConverter.ToInt64(data, 28);
-                long m3 = BitConverter.ToInt64(data, 36);
-
-                if ((Version == 27 || Version == 28) &&
-                    m0 == 0x18 &&
-                    m1 == 0x10 &&
-                    m2 == 0x10 &&
-                    m3 == 0x08)
+                if (data.Length > 0)
                 {
-                    List<StateV27> states = new List<StateV27>();
-                    int offset = 44;
-                    while (offset < data.Length)
+                    Version = BitConverter.ToInt32(data, 4);
+                    long m0 = BitConverter.ToInt64(data, 12);
+                    long m1 = BitConverter.ToInt64(data, 20);
+                    long m2 = BitConverter.ToInt64(data, 28);
+                    long m3 = BitConverter.ToInt64(data, 36);
+
+                    if ((Version == 27 || Version == 28) &&
+                        m0 == 0x18 &&
+                        m1 == 0x10 &&
+                        m2 == 0x10 &&
+                        m3 == 0x08)
                     {
-                        StateV27 state = new StateV27();
-                        int offsetA = BitConverter.ToInt32(data, offset + 8);
-                        int offsetB = BitConverter.ToInt32(data, offset + 16);
-                        int offsetC = BitConverter.ToInt32(data, offset + 24);
-                        int offsetD = BitConverter.ToInt32(data, offset + 32);
-                        int offsetE = BitConverter.ToInt32(data, offset + 40) + 40;
-                        state.ValueF = BitConverter.ToInt64(data, offset + 48);
-                        int offsetG = BitConverter.ToInt32(data, offset + 56);
-                        state.ValueH = BitConverter.ToInt64(data, offset + 64);
-                        state.ValueI = BitConverter.ToInt64(data, offset + 72);
-                        int offsetJ = BitConverter.ToInt32(data, offset + 80) + 80;
-                        int offsetK = BitConverter.ToInt32(data, offset + 88) + 88;
-                        int offsetL = Version == 28 ? BitConverter.ToInt32(data, offset + 96) : 0;
-
-                        int lengthE = BitConverter.ToInt32(data, offset + offsetE + 4);
-                        int lengthJ = BitConverter.ToInt32(data, offset + offsetJ);
-                        int lengthK = BitConverter.ToInt32(data, offset + offsetK);
-
-                        if (offsetA != 0)
+                        List<StateV27> states = new List<StateV27>();
+                        int offset = 44;
+                        while (offset < data.Length)
                         {
-                            offsetA += 8;
-                            int lengthA = BitConverter.ToInt32(data, offset + offsetA + 20) * 2;
-                            state.ValueA = Encoding.Unicode.GetString(data, offset + offsetA + 24, lengthA);
-                        }
-                        else
-                            state.ValueA = "";
+                            StateV27 state = new StateV27();
+                            int offsetA = BitConverter.ToInt32(data, offset + 8);
+                            int offsetB = BitConverter.ToInt32(data, offset + 16);
+                            int offsetC = BitConverter.ToInt32(data, offset + 24);
+                            int offsetD = BitConverter.ToInt32(data, offset + 32);
+                            int offsetE = BitConverter.ToInt32(data, offset + 40) + 40;
+                            state.ValueF = BitConverter.ToInt64(data, offset + 48);
+                            int offsetG = BitConverter.ToInt32(data, offset + 56);
+                            state.ValueH = BitConverter.ToInt64(data, offset + 64);
+                            state.ValueI = BitConverter.ToInt64(data, offset + 72);
+                            int offsetJ = BitConverter.ToInt32(data, offset + 80) + 80;
+                            int offsetK = BitConverter.ToInt32(data, offset + 88) + 88;
+                            int offsetL = Version == 28 ? BitConverter.ToInt32(data, offset + 96) : 0;
 
-                        if (offsetB != 0)
-                        {
-                            offsetB += 16;
-                            int lengthB = BitConverter.ToInt32(data, offset + offsetB + 20) * 2;
-                            state.ValueB = Encoding.Unicode.GetString(data, offset + offsetB + 24, lengthB);
-                        }
-                        else
-                            state.ValueB = "";
+                            int lengthE = BitConverter.ToInt32(data, offset + offsetE + 4);
+                            int lengthJ = BitConverter.ToInt32(data, offset + offsetJ);
+                            int lengthK = BitConverter.ToInt32(data, offset + offsetK);
 
-                        if (offsetC != 0)
-                        {
-                            offsetC += 24;
-                            int lengthC = BitConverter.ToInt32(data, offset + offsetC + 20) * 2;
-                            state.ValueC = Encoding.Unicode.GetString(data, offset + offsetC + 24, lengthC);
-                        }
-                        else
-                            state.ValueC = "";
+                            if (offsetA != 0)
+                            {
+                                offsetA += 8;
+                                int lengthA = BitConverter.ToInt32(data, offset + offsetA + 20) * 2;
+                                state.ValueA = Encoding.Unicode.GetString(data, offset + offsetA + 24, lengthA);
+                            }
+                            else
+                                state.ValueA = "";
 
-                        if (offsetD != 0)
-                        {
-                            offsetD += 32;
-                            int lengthD = BitConverter.ToInt32(data, offset + offsetD);
-                            state.ValueD = new byte[lengthD];
-                            Array.Copy(data, offset + offsetD, state.ValueD, 0, state.ValueD.Length);
-                        }
-                        else
-                            state.ValueD = new byte[0];
-                        
-                        state.ValueE = new List<string>(lengthE);
-                        for (int i = 0; i < lengthE; i++)
-                        {
-                            int offsetStr = BitConverter.ToInt32(data, offset + offsetE + (8 * (i + 1))) + (8 * (i + 1));
-                            int lengthStr = BitConverter.ToInt32(data, offset + offsetE + offsetStr + 20) * 2;
-                            state.ValueE.Add(Encoding.Unicode.GetString(data, offset + offsetE + offsetStr + 24, lengthStr));
-                        }
+                            if (offsetB != 0)
+                            {
+                                offsetB += 16;
+                                int lengthB = BitConverter.ToInt32(data, offset + offsetB + 20) * 2;
+                                state.ValueB = Encoding.Unicode.GetString(data, offset + offsetB + 24, lengthB);
+                            }
+                            else
+                                state.ValueB = "";
 
-                        if (offsetG != 0)
-                        {
-                            offsetG += 56;
-                            int lengthG = offsetJ - offsetG;
-                            state.ValueG = new byte[lengthG];
-                            Array.Copy(data, offset + offsetG, state.ValueG, 0, state.ValueG.Length);
-                        }
-                        else
-                            state.ValueG = new byte[0];
+                            if (offsetC != 0)
+                            {
+                                offsetC += 24;
+                                int lengthC = BitConverter.ToInt32(data, offset + offsetC + 20) * 2;
+                                state.ValueC = Encoding.Unicode.GetString(data, offset + offsetC + 24, lengthC);
+                            }
+                            else
+                                state.ValueC = "";
 
-                        state.ValueJ = new byte[lengthJ];
-                        Array.Copy(data, offset + offsetJ, state.ValueJ, 0, state.ValueJ.Length);
-                        
-                        state.ValueK = new byte[lengthK];
-                        Array.Copy(data, offset + offsetK, state.ValueK, 0, state.ValueK.Length);
+                            if (offsetD != 0)
+                            {
+                                offsetD += 32;
+                                int lengthD = BitConverter.ToInt32(data, offset + offsetD);
+                                state.ValueD = new byte[lengthD];
+                                Array.Copy(data, offset + offsetD, state.ValueD, 0, state.ValueD.Length);
+                            }
+                            else
+                                state.ValueD = new byte[0];
 
-                        if (offsetL != 0)
-                        {
-                            offsetL += 96;
-                            int lengthL = BitConverter.ToInt32(data, offset + offsetL + 4);
-                            state.ValueL = Encoding.ASCII.GetString(data, offset + offsetL + 8, lengthL);
-                            lengthL += 8;
-                            offset += offsetL + (lengthL % 8 == 0 ? lengthL : lengthL / 8 * 8 + 8);
-                        }
-                        else
-                        {
-                            state.ValueL = "";
-                            offset += offsetK + lengthK;
-                        }
+                            state.ValueE = new List<string>(lengthE);
+                            for (int i = 0; i < lengthE; i++)
+                            {
+                                int offsetStr = BitConverter.ToInt32(data, offset + offsetE + (8 * (i + 1))) + (8 * (i + 1));
+                                int lengthStr = BitConverter.ToInt32(data, offset + offsetE + offsetStr + 20) * 2;
+                                state.ValueE.Add(Encoding.Unicode.GetString(data, offset + offsetE + offsetStr + 24, lengthStr));
+                            }
 
-                        states.Add(state);
+                            if (offsetG != 0)
+                            {
+                                offsetG += 56;
+                                int lengthG = offsetJ - offsetG;
+                                state.ValueG = new byte[lengthG];
+                                Array.Copy(data, offset + offsetG, state.ValueG, 0, state.ValueG.Length);
+                            }
+                            else
+                                state.ValueG = new byte[0];
+
+                            state.ValueJ = new byte[lengthJ];
+                            Array.Copy(data, offset + offsetJ, state.ValueJ, 0, state.ValueJ.Length);
+
+                            state.ValueK = new byte[lengthK];
+                            Array.Copy(data, offset + offsetK, state.ValueK, 0, state.ValueK.Length);
+
+                            if (offsetL != 0)
+                            {
+                                offsetL += 96;
+                                int lengthL = BitConverter.ToInt32(data, offset + offsetL + 4);
+                                state.ValueL = Encoding.ASCII.GetString(data, offset + offsetL + 8, lengthL);
+                                lengthL += 8;
+                                offset += offsetL + (lengthL % 8 == 0 ? lengthL : lengthL / 8 * 8 + 8);
+                            }
+                            else
+                            {
+                                state.ValueL = "";
+                                offset += offsetK + lengthK;
+                            }
+
+                            states.Add(state);
+                        }
+                        States = states;
                     }
-                    States = states;
+                    else
+                    {
+                        byte[] states = new byte[data.Length - 8];
+                        Array.Copy(data, 8, states, 0, states.Length);
+                        States = states;
+                    }
                 }
                 else
                 {
-                    byte[] states = new byte[data.Length - 8];
-                    Array.Copy(data, 8, states, 0, states.Length);
+                    Version = 0;
+                    byte[] states = new byte[0];
                     States = states;
                 }
             }
